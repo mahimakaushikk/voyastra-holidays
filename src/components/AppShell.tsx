@@ -1,11 +1,16 @@
 "use client";
 
 import React, { ReactNode } from "react";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import QuickContactDock from "@/components/QuickContactDock";
-import EnquiryModal from "@/components/EnquiryModal";
 import { useEnquiry } from "@/components/EnquiryContext";
+
+// Lazy-load the heavy EnquiryModal so it never slows down page switching
+const EnquiryModal = dynamic(() => import("@/components/EnquiryModal"), {
+  ssr: false,
+});
 
 export default function AppShell({ children }: { children: ReactNode }) {
   const {
@@ -34,15 +39,17 @@ export default function AppShell({ children }: { children: ReactNode }) {
       {/* Floating Quick Contact Dock (Plan Trip + WhatsApp) */}
       <QuickContactDock onOpenEnquiry={() => openEnquiry()} />
 
-      {/* Shared Enquiry Modal */}
-      <EnquiryModal
-        isOpen={isModalOpen}
-        onClose={closeEnquiry}
-        preselectedDestination={selectedDestination}
-        initialTravelType={initialTravelType}
-        initialTravelMonth={initialTravelMonth}
-        customContext={customContext}
-      />
+      {/* Lazy-loaded Enquiry Modal (only rendered when active) */}
+      {isModalOpen && (
+        <EnquiryModal
+          isOpen={isModalOpen}
+          onClose={closeEnquiry}
+          preselectedDestination={selectedDestination}
+          initialTravelType={initialTravelType}
+          initialTravelMonth={initialTravelMonth}
+          customContext={customContext}
+        />
+      )}
     </div>
   );
 }

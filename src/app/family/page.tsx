@@ -440,6 +440,8 @@ export default function FamilyPage() {
                     alt={`${dest.name} family holiday package`}
                     fill
                     style={{ objectFit: "cover" }}
+                    sizes="(max-width: 768px) 100vw, 360px"
+                    loading="lazy"
                   />
                   <div
                     style={{

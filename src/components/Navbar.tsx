@@ -157,6 +157,7 @@ export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) 
               <Link
                 key={link.label}
                 href={link.href}
+                prefetch={true}
                 onClick={() => handleLinkClick(link)}
                 style={{
                   color: isActive ? "var(--color-accent)" : "#F7F6F0",
@@ -257,6 +258,7 @@ export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) 
                 <Link
                   key={link.label}
                   href={link.href}
+                  prefetch={true}
                   onClick={() => handleLinkClick(link)}
                   style={{
                     color: isActive ? "var(--color-accent)" : "#FFFFFF",

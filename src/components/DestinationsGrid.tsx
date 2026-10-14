@@ -113,6 +113,7 @@ export default function DestinationsGrid({ onOpenEnquiry }: DestinationsGridProp
                     transition: "transform 0.4s ease",
                   }}
                   className="dest-image"
+                  loading="lazy"
                 />
 
                 {/* Subtle dark gradient overlay for text readability */}

@@ -916,3 +916,22 @@ nextjs-portal, #__next-build-watcher, [data-nextjs-toast] {
   }
 }
 
+/* Performance & Lightning-Fast Page Transitions */
+.editorial-card,
+.destinations-grid,
+.section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+img {
+  content-visibility: auto;
+}
+
+.desktop-nav a,
+.btn,
+.dest-card {
+  will-change: color, background-color, border-color;
+}
+
+

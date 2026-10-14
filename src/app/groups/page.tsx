@@ -469,6 +469,8 @@ export default function GroupsPage() {
                     alt={`${dest.name} group travel package`}
                     fill
                     style={{ objectFit: "cover" }}
+                    sizes="(max-width: 768px) 100vw, 360px"
+                    loading="lazy"
                   />
                   <div
                     style={{

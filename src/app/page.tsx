@@ -1,16 +1,42 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
 import StatsBar from "@/components/StatsBar";
-import AudienceCurations from "@/components/AudienceCurations";
-import DestinationsGrid from "@/components/DestinationsGrid";
-import CostEstimator from "@/components/CostEstimator";
-import WhyVoyastra from "@/components/WhyVoyastra";
-import Testimonials from "@/components/Testimonials";
-import EnquirySection from "@/components/EnquirySection";
 import { useEnquiry } from "@/components/EnquiryContext";
 import { Destination } from "@/types";
+
+// Below-the-fold components dynamically lazy-loaded for lightning-fast initial load & page switching
+const AudienceCurations = dynamic(() => import("@/components/AudienceCurations"), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: "300px" }} />,
+});
+
+const DestinationsGrid = dynamic(() => import("@/components/DestinationsGrid"), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: "400px" }} />,
+});
+
+const CostEstimator = dynamic(() => import("@/components/CostEstimator"), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: "350px" }} />,
+});
+
+const WhyVoyastra = dynamic(() => import("@/components/WhyVoyastra"), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: "250px" }} />,
+});
+
+const Testimonials = dynamic(() => import("@/components/Testimonials"), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: "300px" }} />,
+});
+
+const EnquirySection = dynamic(() => import("@/components/EnquirySection"), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: "350px" }} />,
+});
 
 export default function Home() {
   const { openEnquiry } = useEnquiry();

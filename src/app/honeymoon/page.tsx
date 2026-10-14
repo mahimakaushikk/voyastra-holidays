@@ -420,6 +420,8 @@ export default function HoneymoonPage() {
                     alt={`${dest.name} romantic honeymoon package`}
                     fill
                     style={{ objectFit: "cover" }}
+                    sizes="(max-width: 768px) 100vw, 360px"
+                    loading="lazy"
                   />
                   <div
                     style={{

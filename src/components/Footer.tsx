@@ -237,6 +237,7 @@ export default function Footer() {
                   <li key={page.href}>
                     <Link
                       href={page.href}
+                      prefetch={true}
                       style={{
                         color: "#A3B5BE",
                         fontSize: "0.86rem",
@@ -266,6 +267,7 @@ export default function Footer() {
                   <li key={d.id}>
                     <Link
                       href="/destinations"
+                      prefetch={true}
                       style={{
                         color: "#A3B5BE",
                         fontSize: "0.85rem",

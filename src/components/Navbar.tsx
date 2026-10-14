@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { CLIENT_INFO } from "@/data/travelData";
+import { useEnquiry } from "@/components/EnquiryContext";
 import { Phone, Compass, Menu, X, ArrowRight } from "lucide-react";
 
 interface NavbarProps {
@@ -12,6 +15,24 @@ interface NavbarProps {
 export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Try using EnquiryContext fallback if direct prop is omitted
+  let contextEnquiry: (() => void) | undefined;
+  try {
+    const { openEnquiry } = useEnquiry();
+    contextEnquiry = () => openEnquiry();
+  } catch (e) {
+    // Context might not be available during isolated unit tests
+  }
+
+  const handleEnquiryClick = () => {
+    if (onOpenEnquiry) {
+      onOpenEnquiry();
+    } else if (contextEnquiry) {
+      contextEnquiry();
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,13 +43,13 @@ export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) 
   }, []);
 
   const navLinks = [
-    { label: "Destinations", href: "#destinations" },
-    { label: "Family", href: "#family", personaId: "family" },
-    { label: "Honeymoon", href: "#honeymoon", personaId: "honeymoon" },
-    { label: "Groups", href: "#groups", personaId: "corporate" },
-    { label: "Trip Cost", href: "#estimator" },
-    { label: "About Us", href: "#why-us" },
-    { label: "Reviews", href: "#reviews" },
+    { label: "Destinations", href: "/destinations" },
+    { label: "Family", href: "/family", personaId: "family" },
+    { label: "Honeymoon", href: "/honeymoon", personaId: "honeymoon" },
+    { label: "Groups", href: "/groups", personaId: "corporate" },
+    { label: "Trip Cost", href: "/trip-cost" },
+    { label: "About Us", href: "/about" },
+    { label: "Reviews", href: "/reviews" },
   ];
 
   const handleLinkClick = (link: { href: string; personaId?: string }) => {
@@ -44,12 +65,12 @@ export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) 
         position: "sticky",
         top: 0,
         zIndex: 40,
-        backgroundColor: isScrolled ? "rgba(18, 49, 58, 0.96)" : "rgba(18, 49, 58, 0.9)",
+        backgroundColor: isScrolled ? "rgba(18, 49, 58, 0.98)" : "rgba(18, 49, 58, 0.92)",
         backdropFilter: "blur(14px)",
         WebkitBackdropFilter: "blur(14px)",
         borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
         transition: "all var(--transition-normal)",
-        boxShadow: isScrolled ? "0 8px 24px rgba(0, 0, 0, 0.2)" : "none",
+        boxShadow: isScrolled ? "0 8px 24px rgba(0, 0, 0, 0.25)" : "none",
       }}
     >
       <div
@@ -61,9 +82,9 @@ export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) 
           height: 66,
         }}
       >
-        {/* Brand Logo */}
-        <a
-          href="#"
+        {/* Brand Logo - Links to Homepage */}
+        <Link
+          href="/"
           style={{
             display: "flex",
             alignItems: "center",
@@ -71,6 +92,7 @@ export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) 
             textDecoration: "none",
             flexShrink: 0,
           }}
+          onClick={() => setIsMobileMenuOpen(false)}
         >
           <div
             style={{
@@ -118,42 +140,52 @@ export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) 
               Holidays
             </div>
           </div>
-        </a>
+        </Link>
 
         {/* Desktop Navigation Links */}
         <nav
           style={{
             display: "none",
             alignItems: "center",
-            gap: 20,
+            gap: 18,
           }}
           className="desktop-nav"
         >
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={() => handleLinkClick(link)}
-              style={{
-                color: "#F7F6F0",
-                fontSize: "0.88rem",
-                fontWeight: 500,
-                whiteSpace: "nowrap",
-                transition: "color 0.2s ease",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-accent)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#F7F6F0")}
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => handleLinkClick(link)}
+                style={{
+                  color: isActive ? "var(--color-accent)" : "#F7F6F0",
+                  fontSize: "0.88rem",
+                  fontWeight: isActive ? 700 : 500,
+                  whiteSpace: "nowrap",
+                  transition: "all 0.2s ease",
+                  position: "relative",
+                  padding: "4px 0",
+                  borderBottom: isActive ? "2px solid var(--color-accent)" : "2px solid transparent",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) e.currentTarget.style.color = "var(--color-accent)";
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) e.currentTarget.style.color = "#F7F6F0";
+                }}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Right Section: Primary Plan Trip Button -> Phone at Far Right -> Mobile Hamburger */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
           {/* Primary High-Contrast Plan My Trip Button */}
           <button
-            onClick={onOpenEnquiry}
+            onClick={handleEnquiryClick}
             className="btn btn-accent btn-sm navbar-cta-btn"
             style={{ fontWeight: 700, padding: "8px 18px", fontSize: "0.88rem" }}
           >
@@ -219,22 +251,29 @@ export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) 
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => handleLinkClick(link)}
-                style={{
-                  color: "#FFFFFF",
-                  fontSize: "1rem",
-                  fontWeight: 600,
-                  padding: "8px 0",
-                  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-                }}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => handleLinkClick(link)}
+                  style={{
+                    color: isActive ? "var(--color-accent)" : "#FFFFFF",
+                    fontSize: "1rem",
+                    fontWeight: isActive ? 700 : 600,
+                    padding: "8px 0",
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span>{link.label}</span>
+                  {isActive && <span style={{ color: "var(--color-accent)", fontSize: "0.8rem" }}>●</span>}
+                </Link>
+              );
+            })}
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 10 }}>
@@ -250,7 +289,7 @@ export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) 
             <button
               onClick={() => {
                 setIsMobileMenuOpen(false);
-                if (onOpenEnquiry) onOpenEnquiry();
+                handleEnquiryClick();
               }}
               className="btn btn-accent"
               style={{ width: "100%", justifyContent: "center" }}
@@ -261,7 +300,6 @@ export default function Navbar({ onOpenEnquiry, onSelectPersona }: NavbarProps) 
           </div>
         </div>
       )}
-
     </header>
   );
 }

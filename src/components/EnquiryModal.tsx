@@ -11,6 +11,8 @@ interface EnquiryModalProps {
   onClose: () => void;
   preselectedDestination?: Destination | null;
   initialCoupon?: string;
+  initialTravelType?: string;
+  initialTravelMonth?: string;
   customContext?: string;
 }
 
@@ -19,6 +21,8 @@ export default function EnquiryModal({
   onClose,
   preselectedDestination,
   initialCoupon,
+  initialTravelType,
+  initialTravelMonth,
   customContext,
 }: EnquiryModalProps) {
   const [name, setName] = useState("");
@@ -27,10 +31,10 @@ export default function EnquiryModal({
   const [destination, setDestination] = useState(
     preselectedDestination ? preselectedDestination.name : "Bali"
   );
-  const [travelType, setTravelType] = useState("Family Vacation");
+  const [travelType, setTravelType] = useState(initialTravelType || "Family Vacation");
   const [travelers, setTravelers] = useState("2 Adults");
   const [notes, setNotes] = useState("");
-  const [travelMonth, setTravelMonth] = useState("October 2026");
+  const [travelMonth, setTravelMonth] = useState(initialTravelMonth || "October 2026");
   const [submitted, setSubmitted] = useState(false);
   const [leadRef, setLeadRef] = useState("");
 
@@ -40,7 +44,17 @@ export default function EnquiryModal({
     }
   }, [preselectedDestination]);
 
+  useEffect(() => {
+    if (initialTravelType) {
+      setTravelType(initialTravelType);
+    }
+  }, [initialTravelType]);
 
+  useEffect(() => {
+    if (initialTravelMonth) {
+      setTravelMonth(initialTravelMonth);
+    }
+  }, [initialTravelMonth]);
 
   useEffect(() => {
     if (customContext) {

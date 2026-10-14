@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { CLIENT_INFO, DESTINATIONS, FAQS } from "@/data/travelData";
-import { Compass, Phone, Mail, MapPin, ChevronDown, ChevronUp, Heart } from "lucide-react";
+import { Compass, Phone, Mail, MapPin, ChevronDown, ChevronUp, Heart, ArrowRight } from "lucide-react";
 
 export default function Footer() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -11,6 +12,16 @@ export default function Footer() {
     setOpenFaq(openFaq === idx ? null : idx);
   };
 
+  const navPages = [
+    { label: "Destinations Discovery", href: "/destinations" },
+    { label: "Family Vacations", href: "/family" },
+    { label: "Honeymoon Escapes", href: "/honeymoon" },
+    { label: "Group & MICE Holidays", href: "/groups" },
+    { label: "Trip Cost Estimator", href: "/trip-cost" },
+    { label: "About Voyastra", href: "/about" },
+    { label: "Guest Reviews", href: "/reviews" },
+  ];
+
   return (
     <footer style={{ backgroundColor: "#09191E", color: "#FFFFFF", paddingTop: 70, borderTop: "2px solid var(--color-accent)" }}>
       {/* FAQ Section */}
@@ -18,13 +29,13 @@ export default function Footer() {
         <div style={{ maxWidth: 760, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 36 }}>
             <span className="badge-tag" style={{ marginBottom: 8 }}>
-              Frequently Asked Questions
+              Got Questions?
             </span>
-            <h3 style={{ color: "#FFFFFF", fontSize: "1.9rem", marginTop: 6 }}>
-              Have Questions Before Booking?
+            <h3 style={{ color: "#FFFFFF", fontSize: "2rem", marginTop: 8 }}>
+              Frequently Asked Questions
             </h3>
             <p style={{ color: "#A3B5BE", fontSize: "0.95rem" }}>
-              Everything you need to know about customizing your holiday with Voyastra Holidays.
+              Everything you need to know about booking your dream vacation with Voyastra.
             </p>
           </div>
 
@@ -33,10 +44,10 @@ export default function Footer() {
               const isOpen = openFaq === idx;
               return (
                 <div
-                  key={idx}
+                  key={faq.q}
                   style={{
-                    backgroundColor: "rgba(18, 49, 58, 0.7)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: "rgba(255, 255, 255, 0.04)",
+                    border: "1px solid rgba(255, 255, 255, 0.08)",
                     borderRadius: "var(--radius-md)",
                     overflow: "hidden",
                     transition: "all 0.2s ease",
@@ -50,17 +61,18 @@ export default function Footer() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
+                      gap: 16,
                       background: "transparent",
                       border: "none",
                       color: "#FFFFFF",
                       textAlign: "left",
+                      cursor: "pointer",
                       fontSize: "0.98rem",
                       fontWeight: 600,
-                      cursor: "pointer",
                     }}
                   >
                     <span>{faq.q}</span>
-                    <span style={{ color: "var(--color-accent)", flexShrink: 0, marginLeft: 12 }}>
+                    <span style={{ color: "var(--color-accent)", flexShrink: 0 }}>
                       {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </span>
                   </button>
@@ -98,14 +110,14 @@ export default function Footer() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
               gap: 36,
               marginBottom: 48,
             }}
           >
             {/* Col 1: Brand & Bio */}
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+              <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 14, textDecoration: "none" }}>
                 <div
                   style={{
                     width: 36,
@@ -131,7 +143,7 @@ export default function Footer() {
                   Voyastra
                 </span>
                 <span style={{ color: "var(--color-accent)", fontSize: "1.2rem" }}>✦</span>
-              </div>
+              </Link>
 
               <p style={{ color: "var(--color-accent)", fontStyle: "italic", fontSize: "0.95rem", marginBottom: 12 }}>
                 &ldquo;{CLIENT_INFO.tagline}&rdquo;
@@ -215,16 +227,45 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Col 2: International Destinations */}
+            {/* Col 2: Quick Links across 7 Pages */}
             <div>
               <h4 style={{ color: "#FFFFFF", fontSize: "1.05rem", marginBottom: 16 }}>
-                International Packages
+                Explore Voyastra
               </h4>
               <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-                {DESTINATIONS.filter((d) => d.category === "international").map((d) => (
+                {navPages.map((page) => (
+                  <li key={page.href}>
+                    <Link
+                      href={page.href}
+                      style={{
+                        color: "#A3B5BE",
+                        fontSize: "0.86rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        transition: "color 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-accent)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "#A3B5BE")}
+                    >
+                      <ArrowRight size={13} style={{ color: "var(--color-accent)" }} />
+                      <span>{page.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Col 3: Featured International & Domestic Packages */}
+            <div>
+              <h4 style={{ color: "#FFFFFF", fontSize: "1.05rem", marginBottom: 16 }}>
+                Featured Packages
+              </h4>
+              <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
+                {DESTINATIONS.slice(0, 5).map((d) => (
                   <li key={d.id}>
-                    <a
-                      href="#destinations"
+                    <Link
+                      href="/destinations"
                       style={{
                         color: "#A3B5BE",
                         fontSize: "0.85rem",
@@ -235,43 +276,15 @@ export default function Footer() {
                       onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-accent)")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "#A3B5BE")}
                     >
-                      <span>{d.name} Package</span>
+                      <span>{d.name} ({d.durationNights}N/{d.durationDays}D)</span>
                       <span style={{ color: "#E2DFD2" }}>₹{d.startingPrice.toLocaleString("en-IN")}</span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Col 3: Domestic India Packages */}
-            <div>
-              <h4 style={{ color: "#FFFFFF", fontSize: "1.05rem", marginBottom: 16 }}>
-                Incredible India Packages
-              </h4>
-              <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-                {DESTINATIONS.filter((d) => d.category === "domestic").map((d) => (
-                  <li key={d.id}>
-                    <a
-                      href="#destinations"
-                      style={{
-                        color: "#A3B5BE",
-                        fontSize: "0.85rem",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        transition: "color 0.2s ease",
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-accent)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = "#A3B5BE")}
-                    >
-                      <span>{d.name} Tour</span>
-                      <span style={{ color: "#E2DFD2" }}>₹{d.startingPrice.toLocaleString("en-IN")}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Col 4: Contact Information */}
+            {/* Col 4: Contact & Office */}
             <div>
               <h4 style={{ color: "#FFFFFF", fontSize: "1.05rem", marginBottom: 16 }}>
                 Contact &amp; Office
@@ -302,7 +315,7 @@ export default function Footer() {
                     backgroundColor: "rgba(255, 255, 255, 0.04)",
                     padding: "10px 12px",
                     borderRadius: "var(--radius-sm)",
-                    border: "1px dashed rgba(199, 165, 107, 0.4)",
+                    border: "1px dashed rgba(224, 122, 43, 0.4)",
                     fontSize: "0.78rem",
                     color: "#F7F3E9",
                   }}
@@ -334,10 +347,9 @@ export default function Footer() {
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-              <span>Privacy Policy</span>
-              <span>Terms of Service</span>
-              <span>IATA Accredited Partner</span>
-              <span>Safe Travels Certified</span>
+              <span>Registered in Noida, Uttar Pradesh</span>
+              <span>100% Verified Stays</span>
+              <span>24/7 Dedicated On-Tour Concierge</span>
             </div>
           </div>
         </div>

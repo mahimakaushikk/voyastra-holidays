@@ -352,6 +352,25 @@ export default function Footer() {
               <span>Registered in Noida, Uttar Pradesh</span>
               <span>100% Verified Stays</span>
               <span>24/7 Dedicated On-Tour Concierge</span>
+              <span style={{ opacity: 0.3 }}>&bull;</span>
+              <Link
+                href="/admin"
+                style={{
+                  color: "#A3B5BE",
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  fontSize: "0.78rem",
+                  transition: "color 0.2s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-accent)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#A3B5BE")}
+                title="Voyastra Holidays Travel Desk Portal"
+              >
+                <span>Staff Portal</span>
+                <span style={{ fontSize: "0.7rem", opacity: 0.8 }}>🔒</span>
+              </Link>
             </div>
           </div>
         </div>

@@ -37,6 +37,9 @@ export default function EnquiryModal({
   const [travelMonth, setTravelMonth] = useState(initialTravelMonth || "October 2026");
   const [submitted, setSubmitted] = useState(false);
   const [leadRef, setLeadRef] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [honeypot, setHoneypot] = useState("");
 
   useEffect(() => {
     if (preselectedDestination) {
@@ -78,25 +81,58 @@ export default function EnquiryModal({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) {
-      alert("Please provide your name and phone number.");
+    if (!name.trim() || !phone.trim()) {
+      setSubmitError("Please provide both your name and phone number.");
       return;
     }
 
-    const ref = "VY-" + Math.floor(100000 + Math.random() * 900000);
-    setLeadRef(ref);
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setSubmitError("");
 
     try {
-      confetti({
-        particleCount: 70,
-        spread: 60,
-        origin: { y: 0.5 },
-        colors: ["#146B65", "#C7A56B", "#12313A"],
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim() || undefined,
+          destination,
+          travelType,
+          travelers,
+          travelMonth,
+          notes: notes.trim() || undefined,
+          source: "modal",
+          hp_website: honeypot,
+        }),
       });
-    } catch (err) {}
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setLeadRef(data.reference);
+        setSubmitted(true);
+
+        try {
+          confetti({
+            particleCount: 70,
+            spread: 60,
+            origin: { y: 0.5 },
+            colors: ["#146B65", "#C7A56B", "#12313A"],
+          });
+        } catch {}
+      } else {
+        setSubmitError(
+          data.error || (data.details && data.details[0]) || "Failed to submit inquiry. Please try again."
+        );
+      }
+    } catch {
+      setSubmitError("Network error. Please check your internet connection or message us directly on WhatsApp.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const whatsappMessage = `Hi Voyastra Holidays! Quick enquiry [Ref: ${leadRef}]:
@@ -197,6 +233,34 @@ Please send itinerary and price quote!`;
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
+              {/* Anti-spam honeypot */}
+              <input
+                type="text"
+                name="hp_website"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                style={{ display: "none" }}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+
+              {submitError && (
+                <div
+                  style={{
+                    backgroundColor: "rgba(239, 68, 68, 0.12)",
+                    border: "1px solid rgba(239, 68, 68, 0.35)",
+                    borderRadius: "var(--radius-sm)",
+                    padding: "10px 14px",
+                    color: "#DC2626",
+                    fontSize: "0.85rem",
+                    marginBottom: 16,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  ⚠️ {submitError}
+                </div>
+              )}
+
               <div className="modal-form-grid">
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, color: "var(--color-text-main)", marginBottom: 5 }}>
@@ -360,11 +424,24 @@ Please send itinerary and price quote!`;
 
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="btn btn-primary"
-                style={{ width: "100%", justifyContent: "center", padding: "13px" }}
+                style={{
+                  width: "100%",
+                  justifyContent: "center",
+                  padding: "13px",
+                  cursor: isSubmitting ? "not-allowed" : "pointer",
+                  opacity: isSubmitting ? 0.75 : 1,
+                }}
               >
-                <Send size={16} />
-                <span>Submit Enquiry For Free Custom Quote</span>
+                {isSubmitting ? (
+                  <span>Registering Your Enquiry...</span>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    <span>Submit Enquiry For Free Custom Quote</span>
+                  </>
+                )}
               </button>
 
               <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 14 }}>

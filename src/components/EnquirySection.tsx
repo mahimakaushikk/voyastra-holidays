@@ -21,26 +21,64 @@ export default function EnquirySection() {
 
   const [submitted, setSubmitted] = useState(false);
   const [leadId, setLeadId] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [honeypot, setHoneypot] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone) {
-      alert("Please provide your Name and Phone Number.");
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      setSubmitError("Please provide both your name and phone number.");
       return;
     }
 
-    const randomLead = "VY-" + Math.floor(100000 + Math.random() * 900000);
-    setLeadId(randomLead);
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setSubmitError("");
 
     try {
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ["#146B65", "#C7A56B", "#12313A"],
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          phone: formData.phone.trim(),
+          email: formData.email.trim() || undefined,
+          destination: formData.destination,
+          travelType: formData.travelType,
+          travelers: formData.travelers,
+          travelMonth: formData.travelMonth,
+          dietary: formData.dietary,
+          departureCity: formData.departureCity,
+          notes: formData.notes.trim() || undefined,
+          source: "section",
+          hp_website: honeypot,
+        }),
       });
-    } catch (err) {}
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setLeadId(data.reference);
+        setSubmitted(true);
+
+        try {
+          confetti({
+            particleCount: 80,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ["#146B65", "#C7A56B", "#12313A"],
+          });
+        } catch {}
+      } else {
+        setSubmitError(
+          data.error || (data.details && data.details[0]) || "Failed to submit inquiry. Please try again."
+        );
+      }
+    } catch {
+      setSubmitError("Network connection error. Please message us on WhatsApp or call our travel desk directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const whatsappLeadMessage = `Hi Voyastra Holidays! I just submitted an enquiry [Ref: ${leadId}]:
@@ -322,6 +360,34 @@ Please connect with me with the best price quote.`;
                 </p>
 
                 <form onSubmit={handleSubmit}>
+                  {/* Anti-spam honeypot */}
+                  <input
+                    type="text"
+                    name="hp_website"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    style={{ display: "none" }}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+
+                  {submitError && (
+                    <div
+                      style={{
+                        backgroundColor: "rgba(239, 68, 68, 0.12)",
+                        border: "1px solid rgba(239, 68, 68, 0.35)",
+                        borderRadius: "var(--radius-sm)",
+                        padding: "10px 14px",
+                        color: "#DC2626",
+                        fontSize: "0.85rem",
+                        marginBottom: 18,
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      ⚠️ {submitError}
+                    </div>
+                  )}
+
                   {/* Name & Phone */}
                   <div className="form-double-col">
                     <div>
@@ -539,11 +605,25 @@ Please connect with me with the best price quote.`;
                   {/* Submit Button */}
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     className="btn btn-primary"
-                    style={{ width: "100%", justifyContent: "center", padding: "14px", fontSize: "1.05rem" }}
+                    style={{
+                      width: "100%",
+                      justifyContent: "center",
+                      padding: "14px",
+                      fontSize: "1.05rem",
+                      cursor: isSubmitting ? "not-allowed" : "pointer",
+                      opacity: isSubmitting ? 0.75 : 1,
+                    }}
                   >
-                    <Send size={18} />
-                    <span>Get Custom Itinerary &amp; Quote</span>
+                    {isSubmitting ? (
+                      <span>Submitting Custom Quote Request...</span>
+                    ) : (
+                      <>
+                        <Send size={18} />
+                        <span>Get Custom Itinerary &amp; Quote</span>
+                      </>
+                    )}
                   </button>
 
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 12, fontSize: "0.78rem", color: "var(--color-text-muted)" }}>

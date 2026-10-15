@@ -127,6 +127,7 @@ export default function GroupsPage() {
             alt="Group celebrating at luxury cliffside resort infinity deck"
             fill
             priority
+            sizes="100vw"
             style={{ objectFit: "cover", objectPosition: "center 30%" }}
           />
           <div

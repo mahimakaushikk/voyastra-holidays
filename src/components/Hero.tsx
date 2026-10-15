@@ -71,6 +71,7 @@ export default function Hero({ onOpenEnquiry, onDestinationSelect }: HeroProps) 
             alt="Luxury Travel Destination"
             fill
             priority
+            sizes="100vw"
             style={{ objectFit: "cover" }}
           />
         </div>

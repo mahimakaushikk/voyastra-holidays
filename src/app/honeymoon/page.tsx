@@ -165,6 +165,7 @@ export default function HoneymoonPage() {
             alt="Romantic Indian couple enjoying a sunset over luxury beach overwater villas"
             fill
             priority
+            sizes="100vw"
             style={{ objectFit: "cover", objectPosition: "center 40%" }}
           />
           <div

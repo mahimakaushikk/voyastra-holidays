@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { TESTIMONIALS, CLIENT_INFO } from "@/data/travelData";
 import { useEnquiry } from "@/components/EnquiryContext";

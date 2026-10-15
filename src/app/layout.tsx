@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { EnquiryProvider } from "@/components/EnquiryContext";
 import AppShell from "@/components/AppShell";
+import PWARegister from "@/components/PWARegister";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -18,6 +19,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://voyastra.in"),
+  manifest: "/manifest.json",
   title: {
     default: "Voyastra Holidays | Duniya Dekho, Apne Andaaz Mein",
     template: "%s | Voyastra Holidays",
@@ -39,6 +41,11 @@ export const metadata: Metadata = {
   authors: [{ name: "Voyastra Holidays" }],
   creator: "Voyastra Holidays",
   publisher: "Voyastra Holidays",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Voyastra Holidays",
+  },
   formatDetection: {
     email: false,
     address: false,
@@ -90,9 +97,14 @@ export default function RootLayout({
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="theme-color" content="#12313A" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
       </head>
       <body>
+        <PWARegister />
         <EnquiryProvider>
           <AppShell>{children}</AppShell>
         </EnquiryProvider>

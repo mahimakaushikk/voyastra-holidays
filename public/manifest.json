@@ -1,0 +1,32 @@
+{
+  "name": "Voyastra Holidays - Premium Travel Advisory",
+  "short_name": "Voyastra",
+  "description": "Boutique holiday advisory for Indian families, honeymoon couples, and corporate groups. Duniya Dekho, Apne Andaaz Mein.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#12313A",
+  "theme_color": "#12313A",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["travel", "lifestyle", "vacation"],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

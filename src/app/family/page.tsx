@@ -182,6 +182,7 @@ export default function FamilyPage() {
             alt="Multi-generational Indian family enjoying a scenic luxury vacation together"
             fill
             priority
+            sizes="100vw"
             style={{ objectFit: "cover", objectPosition: "center 35%" }}
           />
           {/* Dark Overlay for readability */}
